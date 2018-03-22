@@ -52,8 +52,47 @@ $("addTrainBtn").on("click", function(){
         firstDeparture = moment(firstDeparture, 'HH mm');
         if(currentTime < firstDeparture) {
             var arrivalTime = moment(firstDeparture).format ('HH:mm');
-            
+            var nextTrain = moment.duration(firstDeparture.diff(currentTime));
+            var nextTrain = Math.round(nextTrain.asMinutes());
         }
+        else {
+            var nextTrain = moment.duration(currentTime.diff(firstDeparture));
+            var nextTrain = Math.round(nextTrain.asMinutes());
+            var nextTrain = frequency - (nextTrain%frequency);
+            var arrivalTime = moment().add(nextTrain, 'minutes').format('HH:mm');
+        }
+        // update train status and remaining time until next train //
+        var status ="On Time";
+        if (nextTrain > 2 && nextTrain < 10) {
+            status = "Now Boarding";
+        }
+        else if (nextTrain > 1 && nextTrain < 3) {
+            status = "Last Boarding";
+        }
+        else if (nextTrain < 2){
+            status = "Train Departing"
+        }
+        // update table with train data //
+        $("#trainTable > tbody").append("<tr><td>" + train + "</td><td>" + trainName + "</td><td>" + destination + "</td><td>" + frequency + "</td><td>" + arrivalTime + "</td><td>" + nextTrain + " </td><td>" + status + "</td></tr>");
+    });
+    // start the clock with updated time //
+    function StartClockNow(){
+        clockInterval = setInterval(function(){
+            // clock display //
+            $('#currentTime').html(moment().format('H:mm'));
+            // refresh page intervals of 10 minutes //
+            $('#trains').empty();
+                database.once("value", function(snapshot){
+                    snapshot.forEach(function(childSnapshot){
+                        var key = childSnapshot.key();
+                        var childData = childSnapshot.val();
+                            //stores as a variable //
+                            
+                    })
+                })
+        })
+    }
+        
     }
 
 })
