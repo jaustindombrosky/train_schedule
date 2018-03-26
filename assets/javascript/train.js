@@ -1,5 +1,5 @@
 // start firebase //
-var database = new Firebase("https://trainscheduler-34824.firebaseio.com");
+var database = new Firebase("https://trainproject-38083.firebaseio.com/");
 // add train form and added on click //
 $("#displayAddTrainBtn").on("click", function(){
     if ($("#addTrain").hasClass("hide")){
@@ -36,7 +36,7 @@ $("addTrainBtn").on("click", function(){
     $("#firstDepartureInput").val("");
     $("#frequencyInput").val("");
     //hide train after adding to database//
-    $("addTrain").addClass ("hide");
+    $("#addTrain").addClass ("hide");
     return false;
     });
     //firebase event...add new train row//
@@ -74,7 +74,7 @@ $("addTrainBtn").on("click", function(){
         }
         // update table with train data //
         $("#trainTable > tbody").append("<tr><td>" + train + "</td><td>" + trainName + "</td><td>" + destination + "</td><td>" + frequency + "</td><td>" + arrivalTime + "</td><td>" + nextTrain + " </td><td>" + status + "</td></tr>");
-    });
+    };
     // start the clock with updated time //
     function StartClockNow(){
         clockInterval = setInterval(function(){
@@ -87,19 +87,41 @@ $("addTrainBtn").on("click", function(){
                         var key = childSnapshot.key();
                         var childData = childSnapshot.val();
                             //stores as a variable //
-                            
-                    })
-                })
-        })
-    }
-        
-    }
-
-})
-
-
-    }
-})
-
-$('#currentTime').html(moment().format('H:mm'));
-StartClockNow()
+                            var train = childSnapshot.val().train;
+                            var trainName = childSnapshot.val().trainName;
+                            var destination = childSnapshot.val().destination;
+                            var firstDeparture = childSnapshot.val().firstDeparture;
+                            var frequency = childSnapshot.val().frequency;
+                            // minutes until next train //
+                            var currentTime = moment();
+                            firstDeparture = moment(firstDeparture, 'HH mm');
+                            if(currentTime < firstDeparture){
+                                var arrivalTime = moment(firstDeparture).format('HH:mm');
+                                var nextTrain = moment.duration(firstDeparture.diff(currentTime));
+                                var nextTrain = Math.round(nextTrain.asMinutes());
+                            } 
+                            else {
+						        var nextTrain = moment.duration(currentTime.diff(firstDeparture));
+						        var nextTrain = Math.round(nextTrain.asMinutes());
+						        var nextTrain = frequency - (nextTrain%frequency);
+						        var arrivalTime = moment().add(nextTrain, 'minutes').format('HH:mm');
+					        }
+					// Update train status based on remaining time till next train
+					var status = "On Time";
+					if ( nextTrain > 2 && nextTrain < 10 ) {
+						status = "All Aboard";
+					} else if ( nextTrain > 1 && nextTrain < 3 )	{
+						status = "Final Boarding";
+					} else if ( nextTrain < 2 ) {
+						status = "Departing";	
+					}
+					// Add each train's data into the table 
+					$("#trainTable > tbody").append("<tr><td>" + train + "</td><td>" + trainName + "</td><td>" + destination + "</td><td>" + frequency + "</td><td>" + arrivalTime + "</td><td>" + nextTrain + " </td><td>" + status + "</td></tr>");
+				});	
+			});
+	
+	    }, 1000 * 60);
+	}	
+	$('#currentTime').html(moment().format('H:mm'));
+	StartClockNow()
+                   

@@ -3,7 +3,7 @@ html {
 }
 
 body {
-	background: url("../images/whitetile.jpg");
+	background: url("../images/train1.png");
 	background-size: cover;
 	font-family: 'Arial', 'Helvetica Neue', Helvetica, sans-serif;
 	color: #000000;
@@ -19,6 +19,7 @@ body {
 .container {
   background-color: #000000;
   color: #ffffff;	
+  opacity: .8;
 }
 
 .panel-default {
@@ -36,7 +37,7 @@ body {
 }
 
 .panelBorder {
-	border: 5px solid #ffff00;
+	border: 5px solid #c41c1c;
 }
 
 tbody {
