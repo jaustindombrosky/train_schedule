@@ -6,4 +6,18 @@ $(document).ready(function(){
             var destination = $("#destinationInput").val().trim();
             var tTime = moment($("#tTimeInput").val().trim(), "HH:mm").subtract(10, "years").format("X");;
             var frequency = $("#frequencyInput").val().trim();
+            var addNewTrain = {
+                name: tName,
+                line: lName,
+                destination: destination,
+                tTime: tTimeInput,
+                frequency: frequency,
+            }
+            trainData.push(addNewTrain);
+            $("#tNameInput").val("")
+            $("#lNameInput").val("")
+            $("#destinationInput").val("")
+            $("#tTimeInput").val("")
+            $("#frequencyInput").val("")
+
         })
